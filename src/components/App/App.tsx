@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import styles from "./App..module.css"
+import styles from "./App.module.css";
 import SearchBar from "../SearchBar/SearchBar";
 import toast, { Toaster } from "react-hot-toast";
 import MovieGrid from "../MovieGrid/MovieGrid";
@@ -54,8 +54,9 @@ useEffect(() => {
 
   return (
     <>
-     
+      
       <SearchBar onSubmit={handleSubmit} />
+      {isError && <ErrorMessage />}
       <Toaster />
 
       {isLoading && <Loader />}
@@ -75,7 +76,7 @@ useEffect(() => {
         previousLabel="←"
       />}
 
-      {isError && <ErrorMessage />}
+      
 
       {isModalOpen && movie && (
         <MovieModal movie={movie} onClose={closeModal} />
