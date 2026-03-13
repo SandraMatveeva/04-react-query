@@ -9,7 +9,7 @@ import Loader from "../Loader/Loader";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import MovieModal from "../MovieModal/MovieModal";
 import fetchMovies from "../../services/movieService";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import ReactPaginate from 'react-paginate';
 
 export default function App() {
@@ -17,10 +17,11 @@ export default function App() {
   const [query, setQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [movie, setMovie] = useState<Movie | null>(null);
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, isSuccess } = useQuery({
     queryKey: ['movies', query, page],
     queryFn: () => fetchMovies(query, page),
     enabled: query !== "",
+    placeholderData: keepPreviousData,
   });
 
 useEffect(() => {
@@ -37,6 +38,7 @@ useEffect(() => {
 
   const handleSubmit = (query: string) => {
     setQuery(query);
+    setPage (1);
   };
 
   const handleClickFilm = (movie: Movie): void => {
@@ -61,7 +63,7 @@ useEffect(() => {
         <MovieGrid onSelect={handleClickFilm} movies={movies} />
       )}
 
-      {isPagination &&<ReactPaginate 
+      {isSuccess && isPagination &&<ReactPaginate 
         pageCount={totalPages}
         pageRangeDisplayed={5}
         marginPagesDisplayed={1}
@@ -72,7 +74,7 @@ useEffect(() => {
         nextLabel="→"
         previousLabel="←"
       />}
-      
+
       {isError && <ErrorMessage />}
 
       {isModalOpen && movie && (
